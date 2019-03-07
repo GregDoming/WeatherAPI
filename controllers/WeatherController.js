@@ -5,18 +5,27 @@ const inputHelper = require('../helpers/inputHelper.js');
 
 require('dotenv').config();
 
-const getWeatherByCity = (city) => {
+const getWeatherByCity = async (city) => {
+  const woeidUri = `https://www.metaweather.com/api/location/search/?query=${city}`;
   const metaWeatherOptions = {
-    uri: `https://www.metaweather.com/api/location/search/?lattlong=${city}`,
+    uri: woeidUri,
     headers: {
       'User-Agent': 'Request-Promise',
     },
     json: true,
   };
 
-  return rp(metaWeatherOptions)
+  const woeid = await rp(metaWeatherOptions)
+    .then(data => data[0].woeid)
+    .catch((err) => {
+      console.error(err);
+    });
+
+  metaWeatherOptions.uri = `https://www.metaweather.com/api/location/${woeid}/`;
+
+  const weather = rp(metaWeatherOptions)
     .then((data) => {
-      console.log(data)
+      console.log(JSON.stringify(data, null, 4));
     })
     .catch((err) => {
       console.error(err);
@@ -35,17 +44,15 @@ const getCityfromAddress = (str) => {
   };
 
   return rp(mapQuestOptions)
-    .then((data) => { 
-      const city = data.results[0].locations[0].adminArea5;
-      return city;
-    })
+    .then(data => data.results[0].locations[0].adminArea5)
     .catch((err) => {
       console.error(err);
     });
 };
 
+getWeatherByCity('chicago');
+
 module.exports = {
   getCityfromAddress,
   getWeatherByCity,
-}
-
+};
