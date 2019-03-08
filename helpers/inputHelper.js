@@ -10,7 +10,7 @@ const parseLocationInput = (str) => {
   const validHtml = he.encode(noSpaceStr, { strict: true });
   return validHtml;
 };
-
+// console.log(parseLocationInput('miam'))
 module.exports = {
   parseLocationInput,
 };

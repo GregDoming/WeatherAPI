@@ -5,8 +5,8 @@ const inputHelper = require('../helpers/inputHelper.js');
 
 require('dotenv').config();
 
-const getWeatherByCity = async (city) => {
-  const woeidUri = `https://www.metaweather.com/api/location/search/?query=${city}`;
+const getWeatherByCity = async (req, res) => {
+  const woeidUri = `https://www.metaweather.com/api/location/search/?query=${res.locals.city}`;
   const metaWeatherOptions = {
     uri: woeidUri,
     headers: {
@@ -18,23 +18,27 @@ const getWeatherByCity = async (city) => {
   const woeid = await rp(metaWeatherOptions)
     .then(data => data[0].woeid)
     .catch((err) => {
-      console.error(err);
+      console.error('error 1');
     });
 
   metaWeatherOptions.uri = `https://www.metaweather.com/api/location/${woeid}/`;
 
-  const weather = rp(metaWeatherOptions)
+  const weather = await rp(metaWeatherOptions)
     .then((data) => {
-      console.log(JSON.stringify(data, null, 4));
+      console.log('weather obtained');
+      return data;
     })
     .catch((err) => {
-      console.error(err);
+      console.log('error 2')
     });
+
+  if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
+
+  res.status(200).send(weather);
 };
 
-const getCityfromAddress = (str) => {
-  const location = inputHelper.parseLocationInput(str);
-
+const getCityfromAddress = (req, res, next) => {
+  const location = inputHelper.parseLocationInput(req.body.location);
   const mapQuestOptions = {
     uri: `https://www.mapquestapi.com/geocoding/v1/address?key=${process.env.MAPQUEST_KEY}&inFormat=kvp&outFormat=json&location=${location}&thumbMaps=false`,
     headers: {
@@ -43,14 +47,16 @@ const getCityfromAddress = (str) => {
     json: true,
   };
 
-  return rp(mapQuestOptions)
-    .then(data => data.results[0].locations[0].adminArea5)
+  rp(mapQuestOptions)
+    .then((address) => {  
+      res.locals.city = address.results[0].locations[0].adminArea5
+      next();
+    })
     .catch((err) => {
-      console.error(err);
+      console.log('error 3');
     });
+    if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
 };
-
-getWeatherByCity('chicago');
 
 module.exports = {
   getCityfromAddress,
