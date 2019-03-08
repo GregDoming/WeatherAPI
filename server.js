@@ -13,6 +13,8 @@ app.get('/', (req, res) => {
   res.send('Get request to home route reached');
 });
 
-app.post('/api/forecast', weatherController.getCityfromAddress, weatherController.getWeatherByCity);
+app.get('/api/forecast', weatherController.getCityfromAddress, weatherController.getWeatherByCity);
+
+// app.post('/api/forecast', weatherController.getCityfromAddress, weatherController.getWeatherByCity);
 
 app.listen(port, () => console.log('Listening on port 4400'));

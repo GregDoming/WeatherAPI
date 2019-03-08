@@ -29,7 +29,7 @@ const getWeatherByCity = async (req, res) => {
       return data;
     })
     .catch((err) => {
-      console.log('error 2')
+      console.log('error 2');
     });
 
   if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
@@ -38,7 +38,7 @@ const getWeatherByCity = async (req, res) => {
 };
 
 const getCityfromAddress = (req, res, next) => {
-  const location = inputHelper.parseLocationInput(req.body.location);
+  const location = inputHelper.parseLocationInput(req.query);
   const mapQuestOptions = {
     uri: `https://www.mapquestapi.com/geocoding/v1/address?key=${process.env.MAPQUEST_KEY}&inFormat=kvp&outFormat=json&location=${location}&thumbMaps=false`,
     headers: {
