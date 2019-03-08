@@ -1,4 +1,3 @@
 # WeatherAPI
 API to get live weather by zipcode
-Instructions and description on WeatherClient.
-dsjkfsd
+Instructions and description on WeatherClient Readme.
