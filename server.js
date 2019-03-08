@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
   res.send('Get request to home route reached');
 });
 
-app.get('/api/forecast', weatherController.getCityfromAddress, weatherController.getWeatherByCity);
+app.get('/api/forecast', weatherController.checkAuthorization, weatherController.getCityfromAddress, weatherController.getWeatherByCity);
 
 // app.post('/api/forecast', weatherController.getCityfromAddress, weatherController.getWeatherByCity);
 

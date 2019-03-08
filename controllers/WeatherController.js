@@ -47,6 +47,7 @@ const getCityfromAddress = async (req, res, next) => {
     },
     json: true,
   };
+  console.log(req.headers.authorization)
 
   await rp(mapQuestOptions)
     .then((address) => {
@@ -59,7 +60,13 @@ const getCityfromAddress = async (req, res, next) => {
   if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
 };
 
+const checkAuthorization = (req, res, next) => {
+  if (req.headers.authorization !== '12345') res.status(401).send({ message: 'Unauthorized User' })
+  next();
+}
+
 module.exports = {
+  checkAuthorization,
   getCityfromAddress,
   getWeatherByCity,
 };
