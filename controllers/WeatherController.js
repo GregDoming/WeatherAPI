@@ -31,14 +31,15 @@ const getWeatherByCity = async (req, res) => {
     .catch((err) => {
       console.log('error 2');
     });
+    if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
 
-  if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
+    await res.send(weather);
 
-  res.status(200).send(weather);
 };
 
-const getCityfromAddress = (req, res, next) => {
-  const location = inputHelper.parseLocationInput(req.query);
+const getCityfromAddress = async (req, res, next) => {
+  const queryString = Object.keys(req.query);
+  const location = inputHelper.parseLocationInput(queryString[0]);
   const mapQuestOptions = {
     uri: `https://www.mapquestapi.com/geocoding/v1/address?key=${process.env.MAPQUEST_KEY}&inFormat=kvp&outFormat=json&location=${location}&thumbMaps=false`,
     headers: {
@@ -47,15 +48,15 @@ const getCityfromAddress = (req, res, next) => {
     json: true,
   };
 
-  rp(mapQuestOptions)
-    .then((address) => {  
-      res.locals.city = address.results[0].locations[0].adminArea5
+  await rp(mapQuestOptions)
+    .then((address) => {
+      res.locals.city = address.results[0].locations[0].adminArea5;
       next();
     })
     .catch((err) => {
       console.log('error 3');
     });
-    if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
+  if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
 };
 
 module.exports = {
