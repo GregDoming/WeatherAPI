@@ -31,15 +31,15 @@ const getCityfromAddress = async (req, res, next) => {
     json: true,
   };
   console.log(req.headers.authorization);
-  
+
   await rp(mapQuestOptions)
-  .then((address) => {
-    res.locals.city = address.results[0].locations[0].adminArea5;
-    next();
-  })
-  .catch((err) => {
-    console.log('error 3');
-  });
+    .then((address) => {
+      res.locals.city = address.results[0].locations[0].adminArea5;
+      next();
+    })
+    .catch((err) => {
+      console.log('error 3');
+    });
   if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
 };
 
@@ -70,6 +70,7 @@ const getWeatherByCity = async (req, res) => {
 
   const weather = await rp(metaWeatherOptions)
     .then((data) => {
+      // weather[0].city = res.locals.city;
       console.log('weather obtained');
       return data;
     })
@@ -77,7 +78,8 @@ const getWeatherByCity = async (req, res) => {
       console.log('error 2');
     });
   if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
-
+  weather.city = res.locals.city;
+  console.log(weather)
   await res.send(weather);
 };
 
