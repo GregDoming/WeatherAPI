@@ -30,14 +30,13 @@ const getCityfromAddress = async (req, res, next) => {
     },
     json: true,
   };
-  console.log(req.headers.authorization);
 
   await rp(mapQuestOptions)
-    .then((address) => {
+    .then(address => {
       res.locals.city = address.results[0].locations[0].adminArea5;
       next();
     })
-    .catch((err) => {
+    .catch(err => {
       console.log('error 3');
     });
   if (!res.locals.city) res.status(202).send({ message: 'Invalid Input' });
@@ -69,12 +68,11 @@ const getWeatherByCity = async (req, res) => {
   metaWeatherOptions.uri = `https://www.metaweather.com/api/location/${woeid}/`;
 
   const weather = await rp(metaWeatherOptions)
-    .then((data) => {
-      // weather[0].city = res.locals.city;
+    .then(data => {
       console.log('weather obtained');
       return data;
     })
-    .catch((err) => {
+    .catch(err => {
       console.log('error 2');
     });
   if (!weather) res.status(202).send({ message: 'Sorry I can only give the Weather to large cities.' });
