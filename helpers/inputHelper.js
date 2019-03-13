@@ -1,6 +1,6 @@
 const he = require('he');
 
-const parseLocationInput = (str) => {
+const parseLocationInput = str => {
   if (typeof str !== 'string') {
     const noSpaceStr = JSON.stringify(str).replace(/\s+/g, '');
     const validHtml = he.encode(noSpaceStr, { strict: true });
